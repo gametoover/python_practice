@@ -18,17 +18,26 @@ def get_one_page(url):
 
 
 def parse_one_page(html):
-    pattern = re.compile('<i class="board-index board-index-\d+">(\d+)</i>.*?<img data-src="(.*?)" alt="(.*?)" class="board-img" />',re.S)
+    pattern = re.compile('<i class="board-index board-index-\d+">(\d+)</i>.*?'
+                         '<img data-src="(.*?)" '
+                         'alt="(.*?)" class="board-img" />.*?'
+                         '<p class="star">(.*?)</p>.*?'
+                         'class="releasetime">(.*?)</p>.*?'
+                         'class="integer">(.*?)</i>.*?'
+                         'class="fraction">(.*?)</i>',re.S)
     items = re.findall(pattern,html)
     for item in items:
         yield {
             'index':item[0],
             'image':item[1],
-            'title':item[2].strip()
+            'title':item[2].strip(),
+            'actor':item[3].strip()[3:],
+            'time':item[4].strip()[5:],
+            'scorce':item[5].strip() + item[6].strip()
         }
 
 def write_to_file(content):
-    with open(r"C:\Users\xh-32\Desktop\tst.txt",'a',encoding='utf-8') as f:
+    with open(r"C:\Users\xh-32\Desktop\tst.txt",'a+',encoding='utf-8') as f:
         f.write(json.dumps(content,ensure_ascii=False) + '\n')
 
 def main(offset):
